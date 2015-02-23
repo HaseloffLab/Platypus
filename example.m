@@ -1,46 +1,36 @@
 % Example of plate reader data analysis
 %
 % See also:
-%   IMPORTPLATE2
+%   ANALYZEPLATE
+%   IMPORTPLATE
 %   SMOOTHTIMECOURSE
 %   CORRECTBACKGROUND
-%   SELECTWINDOW
-%   COMPUTERATES
+%   FITGOMPERTZMODEL
+%   GOMPERTZ3
+%   CHARACTERIZE
+%   COMPUTERATIOMETRIC
 %   PLOTPROFILE
 %
 
+% Create mask to select wells in plate
+mask = zeros(12,8);
+mask(1:36) = 1;
+mask(1:6,6:8) = 1;
 
-%mask = zeros(12,8);
-%mask(4:5,1:2) = 1; % Use only first 3 rows of plate
-mask = ones(12,8);
+% Import data (assuming cwd is Platypus)
+p1 = importPlate('data/Tim011114.csv', mask, {'CFP','YFP','OD'}, 100);
+p2 = importPlate('data/Tim061114.csv', mask, {'CFP','YFP','OD'}, 100);
 
-% Import data from file 240413.csv
-p = importPlate('140813_AK_MK01.csv', mask, {'CFP','YFP','OD'});
+% Analyze the data
+p1 = analyzePlate(p1);
+p2 = analyzePlate(p2);
 
-% Smooth each channel with its own parameter
-p = smoothTimecourse(p, 1e-5, 'CFP');
-p = smoothTimecourse(p, 1e-5, 'YFP');
-p = smoothTimecourse(p, 1e-4, 'OD');
+% Organise the data accoring to plasmid, replicate, and colony
+[y,c,mum] = reshapelb(p1, p2);
 
-% Correct OD background with minimum as bg value
-p = correctBackground(p, 'OD', []);
+% Plot heat maps of the data
+figure; 
+subplot(3,1,1); imagesc(reshape(y,6,6)); axis equal; colorbar; title('\alpha_y');
+subplot(3,1,2); imagesc(reshape(c,6,6)); axis equal; colorbar; title('\alpha_c');
+subplot(3,1,2); imagesc(reshape(y./c,6,6)); axis equal; colorbar; title('\rho');
 
-% Choose a window of data with 0.1<OD<0.8, and 0<t<1000
-p = selectWindow(p, [0.1,0.8], [0,1000]);
-
-% Compute the rates per OD of all channels
-p = computeRates(p, {'OD','CFP','YFP'});
-
-% Plot some timecourses 
-figure; plot(p(1).t, p(1).CFP, 'b');
-hold on; plot(p(1).t, p(1).YFP, 'r');
-
-% Plot some values against an inducer concentration
-inducer = 1e-6*[0	0.01	0.1	1	2.5	5	10	25	50	100	250	500];    %some arbitrary concentrations for illustration
-wells = [1:12]; % plotting first 12 wells = first row
-
-figure; plotProfile(p, inducer, 'CFP_rate_mean', wells, 'b.');
-hold on; plotProfile(p, inducer, 'YFP_rate_mean', wells, 'r.');
-
-% This will plot the mean CFP level, because 'CFP' is a timecourse
-figure; plotProfile(p, inducer, 'CFP', wells, 'b.');

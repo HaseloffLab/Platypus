@@ -1,24 +1,40 @@
-function cp = characterize(p);
+function rplate = characterize(p, chnames);
 %--------------------------------------------------------------------------
-% cp = characterize(p)
+% rplate = characterize(p, chnames)
 %
+% characterize: compute promoter characteristics and rates for the given
+% channels.
 %
-% p = plate data structure as returned by importPlate etc.
+% p = cell array returned by importPlate2 or subsequent processing.
+% chnames = cell array of channel names (e.g. {'OD', 'CFP'}).
 %
-% cp = modified plate data struct, with params of Gompertz model:
+% Output is:
+%   <chname>_rate = promoter activity
+%   <chname>_alpha = constant of proportionality to growth rate
+%   <chname>_alpha_r2 = R^2 for linear regression of fluorescence against
+%   OD, where alpha is the slope.
 %
 % (c) Tim Rudge, 2014 
 % (Provided under GPL v3 license, http://www.gnu.org/copyleft/gpl.html)
 %--------------------------------------------------------------------------
 
-p = correctBackground(p, 'OD', bg.OD_mean);
-p = correctBackground(p, 'CFP', bg.CFP_mean);
-p = correctBackground(p, 'YFP', bg.YFP_mean);
 
-% Generate spline-smoothed versions of time courses - currently not 
-% actually used but could be helpful
-p = smoothTimecourse(p, 1e-5, 'CFP');
-p = smoothTimecourse(p, 1e-5, 'YFP');
-p = smoothTimecourse(p, 1e-4, 'OD');
+n = length(plate(:));
+nc = length(chnames(:));
 
-p = fitGompertzModel(p, 0.001);
+for i=1:n;
+    for c=1:nc;
+        chname = chnames{c};
+        rname = [chnames{c} '_rate'];
+        ar2name = [chnames{c} '_alpha_r2'];
+        aname = [chnames{c} '_alpha'];
+        
+        window_idx = p(i).window_idx;
+        [pp,r2] = linreg(p(i).OD(window_idx), p(i).(chname)(window_idx));
+        p(i).(aname)= pp(1);
+        p(i).(rname) = pp(1)*p(i).gompertz_mu;
+        p(i).(ar2name) = r2;
+    end;
+end;
+
+rplate = p;

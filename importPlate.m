@@ -36,9 +36,14 @@ nt = size(d.data,1)/(nc*nr);
 nn = size(d.colheaders,2);
 rdata = reshape(d.data,nt, nr, nc, nn);
 
+% There are less time points than use specified, get all of them
+if nt<numtpts; numtpts=nt;
+
+% no mask = use all wells
 if isempty(mask);
-    mask = zeros(12,8); % no mask = use all wells
+    mask = zeros(12,8); 
 end;
+
 for i=1:nr;
     for j=1:nc;
         if mask(i,j)>=0;
