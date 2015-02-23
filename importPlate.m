@@ -1,8 +1,8 @@
-function data = importPlate2(fname, mask, mnames, numtpts);
+function data = importPlate(fname, mask, mnames, numtpts);
 %--------------------------------------------------------------------------
-% data = importPlate2(fname, mask, mnames)
+% data = importPlate(fname, mask, mnames)
 %
-% importPlate2: import data from BMG plate reader csv file.
+% importPlate: import data from BMG plate reader csv file.
 %
 % Load BMG plate reader exported csv file and fill in a struct array - one
 % struct per well

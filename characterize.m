@@ -5,8 +5,8 @@ function rplate = characterize(p, chnames);
 % characterize: compute promoter characteristics and rates for the given
 % channels.
 %
-% p = cell array returned by importPlate2 or subsequent processing.
-% chnames = cell array of channel names (e.g. {'OD', 'CFP'}).
+% p = cell array returned by importPlate or subsequent processing.
+% chnames = cell array of channel names (e.g. {'YFP', 'CFP'}).
 %
 % Output is:
 %   <chname>_rate = promoter activity
