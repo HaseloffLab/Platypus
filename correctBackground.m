@@ -4,9 +4,11 @@ function nplate = correctBackground(plate, chname, bgval);
 %
 % correctBackground: remove background from timecourse measurements.
 %
-% plate = cell array returned by importPlate2 and subsequent processing.
-% chname = name of channel to adjust (string).
-% bgval = background value to remove, or [] to use minimum in timecourse.
+% plate     =   cell array returned by importPlate2 and subsequent processing.
+% chname    =   name of channel to adjust (string).
+% bgval     =   background values to remove, can be a timecourse of single
+% value. This will be extended to match the length of the timecourse to be
+% corrected. Specify bgval=[] to use minimum in timecourse.
 %
 % Remove background from a timecourse channel. Affects all versions
 % of timepoints, e.g. chname='YFP' will remove background from 'YFP', 
@@ -14,8 +16,6 @@ function nplate = correctBackground(plate, chname, bgval);
 % should be corrected using the 'sYFP_bg' field created here. 
 % If bg=[], then the minimum value of the channel (smoothed) in each well
 % will be used as background.
-%
-% TO DO: specify a blank well/wells to use full timecourse/mean as background
 %
 % (c) Tim Rudge, 2014 
 % (Provided under GPL v3 license, http://www.gnu.org/copyleft/gpl.html)
