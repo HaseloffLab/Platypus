@@ -1,11 +1,17 @@
-function cp = analyzePlate(p);
+function ap = analyzePlate(p);
 %--------------------------------------------------------------------------
-% cp = analyzePlate(p)
+% ap = analyzePlate(p)
 %
 %
 % p = plate data structure as returned by importPlate etc.
 %
-% cp = modified plate data struct, with params of Gompertz model:
+% ap = modified plate data struct after:
+%
+%   1. background correction
+%   2. time-course smoothing
+%   3. Gompertz model fitting
+%   4. YFP and CFP promoter characterization
+%   5. Computation of ratiometric characteristics
 %
 % (c) Tim Rudge, 2014 
 % (Provided under GPL v3 license, http://www.gnu.org/copyleft/gpl.html)
